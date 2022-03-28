@@ -46,35 +46,124 @@ var bookTable = /** @class */ (function () {
     }
     bookTable.prototype.index = function () {
         return __awaiter(this, void 0, void 0, function () {
-            var sql, res;
+            var conn, sql, res, error_1;
             return __generator(this, function (_a) {
                 switch (_a.label) {
-                    case 0: return [4 /*yield*/, database_1["default"].connect()];
+                    case 0:
+                        _a.trys.push([0, 3, , 4]);
+                        return [4 /*yield*/, database_1["default"].connect()];
                     case 1:
-                        _a.sent();
+                        conn = _a.sent();
                         sql = "SELECT * FROM bookTables";
-                        return [4 /*yield*/, database_1["default"].query(sql)];
+                        return [4 /*yield*/, conn.query(sql)];
                     case 2:
                         res = _a.sent();
+                        conn.release();
                         return [2 /*return*/, res.rows];
+                    case 3:
+                        error_1 = _a.sent();
+                        throw new Error("could not fetch data from the db ".concat(error_1));
+                    case 4: return [2 /*return*/];
                 }
             });
         });
     };
     bookTable.prototype.create = function (book) {
         return __awaiter(this, void 0, void 0, function () {
-            var text, values, res;
+            var conn, sql, values, res, error_2;
             return __generator(this, function (_a) {
                 switch (_a.label) {
-                    case 0: return [4 /*yield*/, database_1["default"].connect()];
+                    case 0:
+                        _a.trys.push([0, 3, , 4]);
+                        return [4 /*yield*/, database_1["default"].connect()];
                     case 1:
-                        _a.sent();
-                        text = "INSERT INTO bookTables(Title, Author, Total_pages, Book_type, Summary) VALUES ($1, $2, $3, $4, $5) RETURNING *";
+                        conn = _a.sent();
+                        sql = "INSERT INTO bookTables(Title, Author, Total_pages, Book_type, Summary) VALUES ($1, $2, $3, $4, $5) RETURNING *";
                         values = [book.Title, book.Author, book.Total_pages, book.Book_type, book.Summary];
-                        return [4 /*yield*/, database_1["default"].query(text, values)];
+                        return [4 /*yield*/, database_1["default"].query(sql, values)];
                     case 2:
                         res = _a.sent();
+                        conn.release();
                         return [2 /*return*/, res.rows[0]];
+                    case 3:
+                        error_2 = _a.sent();
+                        throw new Error("could not add new book ".concat((book.Title, book.Author, book.Total_pages, book.Book_type, book.Summary), ". Error: ").concat(error_2));
+                    case 4: return [2 /*return*/];
+                }
+            });
+        });
+    };
+    ;
+    bookTable.prototype.show = function (id) {
+        return __awaiter(this, void 0, void 0, function () {
+            var sql, conn, result, error_3;
+            return __generator(this, function (_a) {
+                switch (_a.label) {
+                    case 0:
+                        _a.trys.push([0, 3, , 4]);
+                        sql = 'SELECT * FROM bookTables WHERE id=($1)';
+                        return [4 /*yield*/, database_1["default"].connect()];
+                    case 1:
+                        conn = _a.sent();
+                        return [4 /*yield*/, conn.query(sql, [id])];
+                    case 2:
+                        result = _a.sent();
+                        conn.release();
+                        return [2 /*return*/, result.rows[0]];
+                    case 3:
+                        error_3 = _a.sent();
+                        throw new Error("Could not find book ".concat(id, ". Error: ").concat(error_3));
+                    case 4: return [2 /*return*/];
+                }
+            });
+        });
+    };
+    bookTable.prototype["delete"] = function (id) {
+        return __awaiter(this, void 0, void 0, function () {
+            var sql, conn, result, book, error_4;
+            return __generator(this, function (_a) {
+                switch (_a.label) {
+                    case 0:
+                        _a.trys.push([0, 3, , 4]);
+                        sql = 'DELETE FROM bookTables WHERE id= ($1) RETURNING *';
+                        return [4 /*yield*/, database_1["default"].connect()];
+                    case 1:
+                        conn = _a.sent();
+                        return [4 /*yield*/, conn.query(sql, [id])];
+                    case 2:
+                        result = _a.sent();
+                        book = result.rows[0];
+                        conn.release();
+                        return [2 /*return*/, book];
+                    case 3:
+                        error_4 = _a.sent();
+                        throw new Error("Could not delete book ".concat(id, ". Error: ").concat(error_4));
+                    case 4: return [2 /*return*/];
+                }
+            });
+        });
+    };
+    bookTable.prototype.update = function (id, Title, Author) {
+        return __awaiter(this, void 0, void 0, function () {
+            var sql, conn, result, book, error_5;
+            return __generator(this, function (_a) {
+                switch (_a.label) {
+                    case 0:
+                        _a.trys.push([0, 3, , 4]);
+                        sql = 'UPDATE bookTables SET  Title= ($1), Author = ($2) WHERE id =($3) RETURNING *';
+                        return [4 /*yield*/, database_1["default"].connect()];
+                    case 1:
+                        conn = _a.sent();
+                        return [4 /*yield*/, conn.query(sql, [Title, Author, id])];
+                    case 2:
+                        result = _a.sent();
+                        book = result.rows[0];
+                        conn.release();
+                        return [2 /*return*/, book];
+                    case 3:
+                        error_5 = _a.sent();
+                        throw new Error("could not update book of id".concat(id, ", Error").concat(error_5));
+                    case 4: return [2 /*return*/];
                 }
             });
         });

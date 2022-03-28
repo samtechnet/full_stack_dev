@@ -42,32 +42,17 @@ exports.__esModule = true;
 var express_1 = __importDefault(require("express"));
 var body_parser_1 = __importDefault(require("body-parser"));
 var dotenv_1 = __importDefault(require("dotenv"));
-var book_1 = require("./models/book");
+var book_1 = __importDefault(require("./handlers/book"));
 dotenv_1["default"].config();
 var app = (0, express_1["default"])();
 var address = "0.0.0.0:3001";
 app.use(body_parser_1["default"].json());
-var myBookTables = new book_1.bookTable();
+(0, book_1["default"])(app);
 app.get("/", function (req, res) {
     return __awaiter(this, void 0, void 0, function () {
-        var book, myBookTables, result;
         return __generator(this, function (_a) {
-            switch (_a.label) {
-                case 0:
-                    book = {
-                        Title: 'Bridge to Terabithia',
-                        Author: 'Katherine Peterson',
-                        Total_pages: 208,
-                        Book_type: 'Childrens',
-                        Summary: 'A good book'
-                    };
-                    myBookTables = new book_1.bookTable();
-                    return [4 /*yield*/, myBookTables.create(book)];
-                case 1:
-                    result = _a.sent();
-                    res.send(result);
-                    return [2 /*return*/];
-            }
+            res.send("this is server");
+            return [2 /*return*/];
         });
     });
 });

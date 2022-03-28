@@ -1,7 +1,7 @@
 import express, { Request, Response } from "express";
 import bodyParser from "body-parser";
 import dotenv from "dotenv";
-import { book, bookTable } from "./models/book";
+import book_routes from "./handlers/book";
 
 
 dotenv.config(); 
@@ -11,21 +11,11 @@ const address: string = "0.0.0.0:3001";
 
 app.use(bodyParser.json());
 
-const myBookTables = new bookTable();
+book_routes(app)
 
 app.get("/", async function (req: Request, res: Response) {
-  const book: book = {
-    Title: 'Bridge to Terabithia',
-    Author: 'Katherine Peterson',
-    Total_pages: 208,
-    Book_type: 'Childrens',
-    Summary: 'A good book'
-
-  }
-  const myBookTables = new bookTable();
-  const result = await myBookTables.create(book);
- 
-  res.send(result);
+  
+  res.send("this is server");
  
   
 });

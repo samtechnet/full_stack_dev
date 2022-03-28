@@ -39,39 +39,46 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 exports.__esModule = true;
-var express_1 = __importDefault(require("express"));
-var body_parser_1 = __importDefault(require("body-parser"));
-var dotenv_1 = __importDefault(require("dotenv"));
-var book_1 = require("./models/book");
-dotenv_1["default"].config();
-var app = (0, express_1["default"])();
-var address = "0.0.0.0:3001";
-app.use(body_parser_1["default"].json());
-var myBookTables = new book_1.bookTable();
-app.get("/", function (req, res) {
-    return __awaiter(this, void 0, void 0, function () {
-        var book, myBookTables, result;
-        return __generator(this, function (_a) {
-            switch (_a.label) {
-                case 0:
-                    book = {
-                        Title: 'Bridge to Terabithia',
-                        Author: 'Katherine Peterson',
-                        Total_pages: 208,
-                        Book_type: 'Childrens',
-                        Summary: 'A good book'
-                    };
-                    myBookTables = new book_1.bookTable();
-                    return [4 /*yield*/, myBookTables.create(book)];
-                case 1:
-                    result = _a.sent();
-                    res.send(result);
-                    return [2 /*return*/];
-            }
+exports.bookTable = void 0;
+var database_1 = __importDefault(require("../database"));
+var bookTable = /** @class */ (function () {
+    function bookTable() {
+    }
+    bookTable.prototype.index = function () {
+        return __awaiter(this, void 0, void 0, function () {
+            var sql, res;
+            return __generator(this, function (_a) {
+                switch (_a.label) {
+                    case 0: return [4 /*yield*/, database_1["default"].connect()];
+                    case 1:
+                        _a.sent();
+                        sql = "SELECT * FROM bookTables";
+                        return [4 /*yield*/, database_1["default"].query(sql)];
+                    case 2:
+                        res = _a.sent();
+                        return [2 /*return*/, res.rows];
+                }
+            });
         });
-    });
-});
-console.log(process.env.POSTGRES_USER);
-app.listen(3001, function () {
-    console.log("starting app on: ".concat(address));
-});
+    };
+    bookTable.prototype.create = function (book) {
+        return __awaiter(this, void 0, void 0, function () {
+            var text, values, res;
+            return __generator(this, function (_a) {
+                switch (_a.label) {
+                    case 0: return [4 /*yield*/, database_1["default"].connect()];
+                    case 1:
+                        _a.sent();
+                        text = "INSERT INTO bookTables(Title, Author, Total_pages, Book_type, Summary) VALUES ($1, $2, $3, $4, $5) RETURNING *";
+                        values = [book.Title, book.Author, book.Total_pages, book.Book_type, book.Summary];
+                        return [4 /*yield*/, database_1["default"].query(text, values)];
+                    case 2:
+                        res = _a.sent();
+                        return [2 /*return*/, res.rows[0]];
+                }
+            });
+        });
+    };
+    return bookTable;
+}());
+exports.bookTable = bookTable;

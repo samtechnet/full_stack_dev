@@ -13,7 +13,6 @@ const {
 } = process.env;
 
 let client: Pool;
-console.log("ENV", ENV);
 if (ENV === "test") {
   console.log("I am in test mode");
   client = new Pool({
